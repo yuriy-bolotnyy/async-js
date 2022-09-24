@@ -104,9 +104,70 @@ timeIt(fet)
 
 const parseRequestResults = (txt) => {
     log('Before pasing: ', txt)
-    log('Parsed: ', JSON.parse(txt))
+    let parsed = JSON.parse(txt)
+    log('Parsed: ', parsed)
+
+    parsed.forEach(element => {
+        // log('el=>', element)
+        if (element != undefined) {
+            ({userId, id, title, completed} = element);
+        }
+        log(`userId: ${userId} | id: ${id} | title: ${title} | completed: ${completed}`)
+        
+    });
 }
 
 // classicRequest('https://jsonplaceholder.typicode.com/todos/')
 
-classicRequestWithCallback('https://jsonplaceholder.typicode.com/todos/', parseRequestResults)
+// classicRequestWithCallback('https://jsonplaceholder.typicode.com/todos/', parseRequestResults)
+
+const requestSomethingWithPromise = () => {
+    return new Promise((resolve, reject) => {
+        // fetch something
+        resolve('success data');
+        reject('fail error')
+    })
+};
+
+const resolveHandler = (successReturnedData) => {
+    log('success: ', successReturnedData)
+}
+
+const rejectHandler = (err) => {
+    log('error: ', err)
+}
+
+
+requestSomethingWithPromise().then(resolveHandler, rejectHandler);
+
+// One more way - catch Reject - it's more cleaner syntax
+requestSomethingWithPromise().then(resolveHandler).catch(rejectHandler)
+
+// Refactored the Classic Request with promises now
+const requestWithPromises = (url) => {
+    const request = new XMLHttpRequest();
+
+    return new Promise((resolve, reject) => {
+        // fetch something
+        request.addEventListener('readystatechange', () => {
+            log(`Request ${readyValueToState[request.readyState]}`, request)
+    
+            if (request.readyState === 4) {
+                if (request.status === 200) {
+                    log('>>> Success')
+                    resolve(request.responseText)
+                } else {
+                    log(`Can not fetch the data ... return status ${request.status}`)
+                    reject(request.status)
+                }
+            } 
+        })
+    
+        request.open('GET', url);
+        request.send();
+    })
+}
+
+requestWithPromises('https://jsonplaceholder.typicode.com/todos/')
+    .then(data => log(`Success Result: `, data))
+    .catch(err => log(`Fail: `, err))
