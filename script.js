@@ -171,3 +171,18 @@ const requestWithPromises = (url) => {
 requestWithPromises('https://jsonplaceholder.typicode.com/todos/')
     .then(data => log(`Success Result: `, data))
     .catch(err => log(`Fail: `, err))
+
+
+// Yet another even better way - Fetch API
+
+log('============= Now through Fetch API ... ==============')
+fetch('https://jsonplaceholder.typicode.com/todos/')
+    .then((response) => {
+        log('resolved: ')
+        return response.json()
+    }).then(data => {
+        log('data: ', data)
+    })
+    .catch(err => {
+        log('error: ', err)
+    });
