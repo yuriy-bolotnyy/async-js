@@ -193,11 +193,16 @@ fetch('https://jsonplaceholder.typicode.com/todos/')
 log('========= Async & Await ===========')
 const requestAsync = async () => {
     const response = await fetch('https://jsonplaceholder.typicode.com/todoss/')
-    const data = await response.json().catch(error => log('<<<<await error'))
+
+    if (response.status !== 200) {
+        throw new Error(`cannot fetch data: error code: ${response.status}`);
+    }
+
+    const data = await response.json()
     log('Awaited response: ', data)
     return data
 }
 
 const test = requestAsync()
-    .then(data => log('<<<<<< data: ', data))
-    .catch(err => log('<<<<< reject: ', err))
+    .then(data => log('<<<---<<< data: ', data))
+    .catch(err => log('<<<+++<< reject: ', err.message))
